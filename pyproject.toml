@@ -1,0 +1,21 @@
+[project]
+name = "streamlit-streamliner"
+version = "0.1.0"
+description = "Add a short description here"
+authors = [{name = "tanner-ray-martin", email = "tanner.ray.martin.123@gmail.com"}]
+requires-python = ">= 3.11"
+dependencies = [ "streamlit>=1.39.0,<1.40", "streamlit-option-menu>=0.3.13,<0.4", "sqlmodel>=0.0.22,<0.1", "pandas>=2.2.3,<2.3", "plotly>=5.24.1,<5.25"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["win-64"]
+
+[tool.pixi.pypi-dependencies]
+streamlit-streamliner = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+app = "streamlit run streamlit_streamliner/Home.py"
