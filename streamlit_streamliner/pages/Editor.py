@@ -77,86 +77,84 @@ def add_widget(widget_name, target_column):
 
 
 # Widget selection
-st.sidebar.header("Add Widgets")
-available_widgets = list(WIDGETS.keys())
-selected_widget = st.sidebar.selectbox(
-    "Select a widget to add", [""] + available_widgets
-)
 
-if selected_widget:
-    # Select target column
-    target_column = st.sidebar.selectbox(
-        "Select Target Column",
-        [f"Column {i+1}" for i in range(num_columns)],
-        key="target_column",
-    )
-    if st.sidebar.button("Add Widget"):
-        add_widget(selected_widget, target_column)
-        # No need to rerun; Streamlit will update automatically
+with st.sidebar.expander("Add Widgets"):
+    available_widgets = list(WIDGETS.keys())
+    selected_widget = st.selectbox("Select a widget to add", [""] + available_widgets)
+
+    if selected_widget:
+        # Select target column
+        target_column = st.selectbox(
+            "Select Target Column",
+            [f"Column {i+1}" for i in range(num_columns)],
+            key="target_column",
+        )
+        if st.button("Add Widget"):
+            add_widget(selected_widget, target_column)
+            # No need to rerun; Streamlit will update automatically
 
 # Display widgets in sidebar for customization
 if st.session_state.widgets:
-    st.sidebar.markdown("---")
-    st.sidebar.header("Customize Widgets")
-    widgets_to_remove = []
-    for idx, widget in enumerate(st.session_state.widgets):
-        with st.sidebar.expander(f"{idx + 1}. {widget['name']} in {widget['column']}"):
-            # Customize parameters
-            for param, value in widget["params"].items():
-                if param == "key":
-                    continue  # Skip the key parameter
-                param_type = type(value)
-                # Provide appropriate input fields based on parameter type
-                if isinstance(value, str):
-                    widget["params"][param] = st.text_input(
-                        f"{param}", value=value, key=f"{widget['id']}_{param}"
-                    )
-                elif isinstance(value, int):
-                    widget["params"][param] = st.number_input(
-                        f"{param}", value=value, key=f"{widget['id']}_{param}"
-                    )
-                elif isinstance(value, float):
-                    widget["params"][param] = st.number_input(
-                        f"{param}",
-                        value=value,
-                        key=f"{widget['id']}_{param}",
-                        format="%.2f",
-                    )
-                elif isinstance(value, bool):
-                    widget["params"][param] = st.checkbox(
-                        f"{param}", value=value, key=f"{widget['id']}_{param}"
-                    )
-                elif isinstance(value, list):
-                    options_str = st.text_area(
-                        f"{param} (comma-separated)",
-                        value=", ".join(map(str, value)),
-                        key=f"{widget['id']}_{param}",
-                    )
-                    widget["params"][param] = [
-                        opt.strip() for opt in options_str.split(",")
-                    ]
-                elif value is None:
-                    widget["params"][param] = st.text_input(
-                        f"{param}", value="", key=f"{widget['id']}_{param}"
-                    )
-                # Add more types if necessary
+    with st.sidebar.container(border=True):
+        widgets_to_remove = []
+        for idx, widget in enumerate(st.session_state.widgets):
+            with st.expander(f"{idx + 1}. {widget['name']} in {widget['column']}"):
+                # Customize parameters
+                for param, value in widget["params"].items():
+                    if param == "key":
+                        continue  # Skip the key parameter
+                    param_type = type(value)
+                    # Provide appropriate input fields based on parameter type
+                    if isinstance(value, str):
+                        widget["params"][param] = st.text_input(
+                            f"{param}", value=value, key=f"{widget['id']}_{param}"
+                        )
+                    elif isinstance(value, int):
+                        widget["params"][param] = st.number_input(
+                            f"{param}", value=value, key=f"{widget['id']}_{param}"
+                        )
+                    elif isinstance(value, float):
+                        widget["params"][param] = st.number_input(
+                            f"{param}",
+                            value=value,
+                            key=f"{widget['id']}_{param}",
+                            format="%.2f",
+                        )
+                    elif isinstance(value, bool):
+                        widget["params"][param] = st.checkbox(
+                            f"{param}", value=value, key=f"{widget['id']}_{param}"
+                        )
+                    elif isinstance(value, list):
+                        options_str = st.text_area(
+                            f"{param} (comma-separated)",
+                            value=", ".join(map(str, value)),
+                            key=f"{widget['id']}_{param}",
+                        )
+                        widget["params"][param] = [
+                            opt.strip() for opt in options_str.split(",")
+                        ]
+                    elif value is None:
+                        widget["params"][param] = st.text_input(
+                            f"{param}", value="", key=f"{widget['id']}_{param}"
+                        )
+                    # Add more types if necessary
 
-            # Change target column
-            widget["column"] = st.selectbox(
-                "Change Target Column",
-                [f"Column {i+1}" for i in range(num_columns)],
-                index=int(widget["column"].split()[-1]) - 1,
-                key=f"{widget['id']}_column",
-            )
+                # Change target column
+                widget["column"] = st.selectbox(
+                    "Change Target Column",
+                    [f"Column {i+1}" for i in range(num_columns)],
+                    index=int(widget["column"].split()[-1]) - 1,
+                    key=f"{widget['id']}_column",
+                )
 
-            # Remove widget
-            remove = st.button("Remove Widget", key=f"remove_{widget['id']}")
-            if remove:
-                widgets_to_remove.append(idx)
+                # Remove widget
+                remove = st.button("Remove Widget", key=f"remove_{widget['id']}")
+                if remove:
+                    widgets_to_remove.append(idx)
 
-    # Remove widgets outside the loop to avoid indexing issues
-    for idx in sorted(widgets_to_remove, reverse=True):
-        del st.session_state.widgets[idx]
+        # Remove widgets outside the loop to avoid indexing issues
+        for idx in sorted(widgets_to_remove, reverse=True):
+            del st.session_state.widgets[idx]
 
 # Main Page Preview
 st.header("Preview")

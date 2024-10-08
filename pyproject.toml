@@ -19,3 +19,7 @@ streamlit-streamliner = { path = ".", editable = true }
 
 [tool.pixi.tasks]
 app = "streamlit run streamlit_streamliner/Home.py"
+app2 = "streamlit run streamlit_db_generator/Home.py"
+
+[tool.pixi.dependencies]
+openpyxl = ">=3.1.5,<3.2"
