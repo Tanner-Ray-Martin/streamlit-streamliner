@@ -1,4 +1,4 @@
-Here’s a refined version of your README file:
+
 
 ---
 
@@ -57,4 +57,3 @@ Below are some screenshots of the application in action:
 
 ---
 
-This version adds structure and clarity to your README while keeping all relevant details in place!
